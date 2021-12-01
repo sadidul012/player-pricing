@@ -28,8 +28,11 @@ parameters = {
 estimator = lgb.LGBMRegressor()
 estimator = GridSearchCV(estimator, parameters, verbose=3, n_jobs=2)
 
-train_x = pd.read_csv(Path(processed_path, "dataset_for_2022.csv"))
-train_y = train_x[["price"]]
+train_x = pd.read_csv(Path(processed_path, "Database_2022.csv"))
+train_x.dropna(inplace=True)
+train_y = train_x[["price_change"]]
+train_x = train_x[[x for x in train_x.columns if x not in exclude_for_x]]
+
 train_x = train_x[list(train_x.columns)[:-1]]
 train_x, test_x, train_y, test_y = train_test_split(train_x.values, train_y.values, random_state=42)
 print(train_x.shape, test_x.shape, train_y.shape, test_y.shape)

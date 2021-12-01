@@ -8,7 +8,7 @@ import warnings
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
 
-dataset_2022 = pd.read_csv("/mnt/Cache/data/player-pricing/dataset_for_2022.csv")
+dataset_2022 = pd.read_csv(Path(data_root, "Database_2022.csv"))
 
 pc_prices = dataset_2022[["PC dialy prices"]]
 pc_prices["PC dialy prices"] = pc_prices["PC dialy prices"].apply(lambda x: split_price_history(x))
@@ -36,7 +36,18 @@ train_data[["Data-version", "Position"]] = oe.fit_transform(train_data[["Data-ve
 save_object(oe, "oe")
 train_data = train_data.loc[train_data.price > 0]
 train_data.drop_duplicates(inplace=True)
-print(train_data.head(10))
-print(train_data.shape)
 
-train_data.to_csv(Path(processed_path, "dataset_for_2022.csv"), index=False)
+
+def shift(x):
+    x["future_price"] = x["price"].shift(-1)
+    return x
+
+
+shifted_data = train_data.groupby('Player ID').apply(shift)
+shifted_data["price_change"] = shifted_data["price"] - shifted_data["future_price"]
+# shifted_data.dropna(inplace=True)
+
+print(shifted_data.head(10))
+print(shifted_data.shape)
+
+shifted_data.to_csv(Path(processed_path, "Database_2022.csv"), index=False)

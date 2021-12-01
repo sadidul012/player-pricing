@@ -1,0 +1,15 @@
+version: '3.7'
+
+services:
+  player-pricing:
+    container_name: player-pricing
+    tty: true
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - './:/player-pricing'
+      - /mnt/Cache/data/player-pricing:/input/player-pricing
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all

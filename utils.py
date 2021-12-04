@@ -3,6 +3,7 @@ import pickle
 
 # data_root = Path("/input/player-pricing")
 data_root = Path("/mnt/Cache/data/player-pricing")
+dataset_name = "Database_2022.csv"
 
 objects_path = Path(data_root, "objects")
 processed_path = Path(data_root, "processed")

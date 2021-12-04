@@ -6,7 +6,7 @@ from model import build_model, build_lstm_model
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import ReduceLROnPlateau
 
-train_x = pd.read_csv(Path(processed_path, "Database_2022.csv"))
+train_x = pd.read_csv(Path(processed_path, dataset_name))
 train_x.dropna(inplace=True)
 train_y = train_x[["price_change"]]
 train_x = train_x[[x for x in train_x.columns if x not in exclude_for_x]]
@@ -55,7 +55,7 @@ try:
 except KeyboardInterrupt:
     print("terminating training..")
 
-model.save("/mnt/Cache/data/player-pricing/models/transformer")
+model.save(Path(data_root, "models", "transformer"))
 
 print("evaluating...")
 

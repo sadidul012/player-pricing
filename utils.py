@@ -1,9 +1,12 @@
 from pathlib import Path
 import pickle
 
-data_root = Path("/input/player-pricing")
-# data_root = Path("/mnt/Cache/data/player-pricing")
-dataset_name = "Database_2022.csv"
+# data_root = Path("/input/player-pricing")
+data_root = Path("/mnt/Cache/data/player-pricing")
+dataset_name = "dataset_for_2021.csv"
+
+price_column = "PC dialy prices"
+game_index = -1
 
 objects_path = Path(data_root, "objects")
 processed_path = Path(data_root, "processed")

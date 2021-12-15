@@ -26,5 +26,11 @@ inference_data["transformer"] = transformer.predict(np.expand_dims(inference_x.v
 inference_data = meta_data.join(inference_data, on="Player ID", lsuffix='_caller', rsuffix='_other')
 inference_data.sort_values(by=['price_change', 'lgb', 'price'], ascending=False, inplace=True)
 inference_data.columns = ["Player ID", "Name", "Data-version", "Rating", "Position", "Current Price", "Average Price Change", "LGB Prediction", "Transformer Prediction"]
-inference_data.to_csv("output.csv", index=False)
-print(inference_data.head())
+inference_data["Action"] = ((inference_data["Current Price"] + inference_data["LGB Prediction"]) * 0.05)
+inference_data.loc[(inference_data["Current Price"] >= 150) & (inference_data["Current Price"] < 1000), "min_change"] = 50
+inference_data.loc[(inference_data["Current Price"] >= 1000) & (inference_data["Current Price"] < 10000), "min_change"] = 100
+inference_data.loc[(inference_data["Current Price"] >= 10000) & (inference_data["Current Price"] < 50000), "min_change"] = 250
+inference_data.loc[(inference_data["Action"] < inference_data["LGB Prediction"]) & (inference_data["Action"] >= inference_data["min_change"]), "Action"] = "Buy"
+inference_data.loc[inference_data["Action"] != "Buy", "Action"] = "Sell"
+inference_data[["Player ID", "Name", "Data-version", "Rating", "Position", "Current Price", "Average Price Change", "LGB Prediction", "Transformer Prediction", "Action"]].to_csv("output.csv", index=False)
+print(inference_data[inference_data["Current Price"] < 50000][["Current Price", "Average Price Change", "LGB Prediction", "action", "min_change"]].head())

@@ -48,7 +48,7 @@ try:
         train_x,
         train_y,
         validation_split=0.2,
-        epochs=1000,
+        epochs=5,
         batch_size=4,
         callbacks=callbacks,
     )

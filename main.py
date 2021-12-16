@@ -5,7 +5,7 @@ from tensorflow.keras.models import load_model
 
 
 inference_data = pd.read_csv(Path(processed_path, dataset_name))
-
+print("dataset:", dataset_name)
 meta_data = inference_data[['Player ID', 'Name', 'Data-version', 'Position']].drop_duplicates()
 oe = load_object("oe")
 meta_data[["Data-version", "Position"]] = oe.inverse_transform(meta_data[["Data-version", "Position"]].astype(np.float))
@@ -33,4 +33,4 @@ inference_data.loc[(inference_data["Current Price"] >= 10000) & (inference_data[
 inference_data.loc[(inference_data["Action"] < inference_data["LGB Prediction"]) & (inference_data["Action"] >= inference_data["min_change"]), "Action"] = "Buy"
 inference_data.loc[inference_data["Action"] != "Buy", "Action"] = "Sell"
 inference_data[["Player ID", "Name", "Data-version", "Rating", "Position", "Current Price", "Average Price Change", "LGB Prediction", "Transformer Prediction", "Action"]].to_csv("output.csv", index=False)
-print(inference_data[inference_data["Current Price"] < 50000][["Current Price", "Average Price Change", "LGB Prediction", "action", "min_change"]].head())
+print(inference_data[inference_data["Current Price"] < 50000][["Current Price", "Average Price Change", "LGB Prediction", "Action", "min_change"]].head())

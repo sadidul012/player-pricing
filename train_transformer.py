@@ -6,6 +6,7 @@ from model import build_model, build_lstm_model
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import ReduceLROnPlateau
 
+print("dataset:", dataset_name)
 train_x = pd.read_csv(Path(processed_path, dataset_name))
 train_x.dropna(inplace=True)
 train_y = train_x[["price_change"]]

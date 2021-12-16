@@ -16,6 +16,7 @@ def shift(x):
 
 def process(dataset, price_column_name, index):
     pc_prices = dataset[[price_column_name]]
+    print(pc_prices.head())
     pc_prices[price_column_name] = pc_prices[price_column_name].apply(lambda x: split_price_history(x))
     pc_prices = pc_prices.explode(price_column_name)
     price_history = pc_prices[price_column_name].apply(pd.Series)
@@ -52,9 +53,12 @@ def process(dataset, price_column_name, index):
 
 
 raw_dataset = pd.read_csv(Path(data_root, dataset_name))
-pc_data = process(raw_dataset, price_column, game_index)
-
-print(pc_data.head(10))
-print(pc_data.shape)
-
-pc_data.to_csv(Path(processed_path, dataset_name), index=False)
+# raw_dataset = raw_dataset.iloc[2249:2260]
+# raw_dataset = raw_dataset.loc[raw_dataset["Rating"] == "Rating"]
+print(raw_dataset)
+# pc_data = process(raw_dataset, price_column, game_index)
+# print("dataset:", dataset_name)
+# print(pc_data.head(10))
+# print(pc_data.shape)
+#
+# pc_data.to_csv(Path(processed_path, dataset_name), index=False)

@@ -3,13 +3,15 @@ from sklearn.model_selection import GridSearchCV, train_test_split
 from utils import *
 from helpers import *
 from time import process_time
+import glob
+from os.path import splitext, basename
 
 import lightgbm as lgb
 
 start_time = process_time()
 
 parameters = {
-    'n_estimators': [92700, 3000, 40000],
+    'n_estimators': [3000],
     'metric': ['mse'],
     'n_jobs': [4],
     'boosting_type': ['goss'],
@@ -25,25 +27,29 @@ parameters = {
     'cat_l2': [12.979520035205597]
 }
 
-estimator = lgb.LGBMRegressor()
-estimator = GridSearchCV(estimator, parameters, verbose=3, n_jobs=2)
-print("dataset:", dataset_name)
-train_x = pd.read_csv(Path(processed_path, dataset_name))
-train_x.dropna(inplace=True)
-train_y = train_x[["price_change"]]
-train_x = train_x[[x for x in train_x.columns if x not in exclude_for_x]]
+datasets = list(glob.glob(str(processed_path) + "/**.csv"))
 
-train_x = train_x[list(train_x.columns)[:-1]]
-train_x, test_x, train_y, test_y = train_test_split(train_x.values, train_y.values, random_state=42)
-print(train_x.shape, test_x.shape, train_y.shape, test_y.shape)
-estimator.fit(np.array(train_x), np.array(train_y).ravel())
+for dataset_name in datasets:
+    model_name = splitext(basename(dataset_name))[0]
+    estimator = lgb.LGBMRegressor()
+    estimator = GridSearchCV(estimator, parameters, verbose=3, n_jobs=2)
 
-save_object(estimator, "lgb")
-estimator = load_object("lgb")
+    train_x = pd.read_csv(Path(processed_path, dataset_name))
+    train_x.dropna(inplace=True)
+    train_y = train_x[["price_change"]]
+    train_x = train_x[[x for x in train_x.columns if x not in exclude_for_x]]
 
-print(train_x.shape, test_x.shape, train_y.shape, test_y.shape)
-y_hat = estimator.predict(test_x)
+    train_x = train_x[list(train_x.columns)[:-1]]
+    train_x, test_x, train_y, test_y = train_test_split(train_x.values, train_y.values, random_state=42)
+    print(train_x.shape, test_x.shape, train_y.shape, test_y.shape)
+    estimator.fit(np.array(train_x), np.array(train_y).ravel())
 
-print_losses(y_hat, np.array(test_y).ravel())
+    save_object(estimator, "lgb-"+model_name)
+    estimator = load_object("lgb-"+model_name)
 
-print("time", process_time() - start_time)
+    print(train_x.shape, test_x.shape, train_y.shape, test_y.shape)
+    y_hat = estimator.predict(test_x)
+
+    print_losses(y_hat, np.array(test_y).ravel())
+
+    print("time", process_time() - start_time)

@@ -3,8 +3,6 @@ import pickle
 
 # data_root = Path("/input/player-pricing")
 data_root = Path("/mnt/Cache/data/player-pricing")
-dataset_name = "dataset_for_2021.csv"
-
 price_column = "PC dialy prices"
 game_index = -1
 

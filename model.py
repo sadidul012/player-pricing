@@ -41,11 +41,3 @@ def build_model(
         x = layers.Dropout(mlp_dropout)(x)
     outputs = layers.Dense(n_classes, activation="linear")(x)
     return keras.Model(inputs, outputs)
-
-
-def build_lstm_model(input_shape):
-    model = keras.Sequential()
-    model.add(layers.LSTM(50, activation='relu', input_shape=input_shape))
-    model.add(layers.Dense(1))
-
-    return model

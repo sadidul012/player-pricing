@@ -27,29 +27,34 @@ parameters = {
     'cat_l2': [12.979520035205597]
 }
 
-datasets = list(glob.glob(str(processed_path) + "/**.csv"))
 
-for dataset_name in datasets:
-    model_name = splitext(basename(dataset_name))[0]
-    estimator = lgb.LGBMRegressor()
-    estimator = GridSearchCV(estimator, parameters, verbose=3, n_jobs=2)
+def train_lgb(datasets):
+    for dataset_name in datasets:
+        model_name = splitext(basename(dataset_name))[0]
+        estimator = lgb.LGBMRegressor()
+        estimator = GridSearchCV(estimator, parameters, verbose=3, n_jobs=2)
 
-    train_x = pd.read_csv(Path(processed_path, dataset_name))
-    train_x.dropna(inplace=True)
-    train_y = train_x[["price_change"]]
-    train_x = train_x[[x for x in train_x.columns if x not in exclude_for_x]]
+        train_x = pd.read_csv(Path(processed_path, dataset_name))
+        train_x.dropna(inplace=True)
+        train_y = train_x[["price_change"]]
+        train_x = train_x[[x for x in train_x.columns if x not in exclude_for_x]]
 
-    train_x = train_x[list(train_x.columns)[:-1]]
-    train_x, test_x, train_y, test_y = train_test_split(train_x.values, train_y.values, random_state=42)
-    print(train_x.shape, test_x.shape, train_y.shape, test_y.shape)
-    estimator.fit(np.array(train_x), np.array(train_y).ravel())
+        train_x = train_x[list(train_x.columns)[:-1]]
+        train_x, test_x, train_y, test_y = train_test_split(train_x.values, train_y.values, random_state=42)
+        print(train_x.shape, test_x.shape, train_y.shape, test_y.shape)
+        estimator.fit(np.array(train_x), np.array(train_y).ravel())
 
-    save_object(estimator, "lgb-"+model_name)
-    estimator = load_object("lgb-"+model_name)
+        save_object(estimator, "lgb-"+model_name)
+        estimator = load_object("lgb-"+model_name)
 
-    print(train_x.shape, test_x.shape, train_y.shape, test_y.shape)
-    y_hat = estimator.predict(test_x)
+        print(train_x.shape, test_x.shape, train_y.shape, test_y.shape)
+        y_hat = estimator.predict(test_x)
 
-    print_losses(y_hat, np.array(test_y).ravel())
+        print_losses(y_hat, np.array(test_y).ravel())
 
-    print("time", process_time() - start_time)
+        print("time", process_time() - start_time)
+
+
+if __name__ == '__main__':
+    d = list(glob.glob(str(processed_path) + "/**.csv"))
+    train_lgb(d)

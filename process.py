@@ -53,24 +53,25 @@ def process(dataset, price_column_name, index, m_name):
     return train_data
 
 
-datasets = list(glob.glob(str(data_root) + "/datasets/**.csv"))
+if __name__ == '__main__':
+    datasets = list(glob.glob(str(data_root) + "/datasets/**.csv"))
 
-for dataset_name in datasets:
-    model_name = splitext(basename(dataset_name))[0]
-    print(model_name)
-    try:
-        raw_dataset = pd.read_csv(Path(data_root, dataset_name))
-        pc_data = process(raw_dataset, price_column, game_index, model_name)
-        pc_data.to_csv(Path(processed_path, basename(dataset_name)), index=False)
-        print(model_name, "saved")
-    except Exception as e:
-        print(e)
+    for dataset_name in datasets:
+        model_name = splitext(basename(dataset_name))[0]
+        print(model_name)
+        try:
+            raw_dataset = pd.read_csv(Path(data_root, dataset_name))
+            pc_data = process(raw_dataset, price_column, game_index, model_name)
+            pc_data.to_csv(Path(processed_path, basename(dataset_name)), index=False)
+            print(model_name, "saved")
+        except Exception as e:
+            print(e)
 
-# raw_dataset = raw_dataset.iloc[2249:2260]
-# raw_dataset = raw_dataset.loc[raw_dataset["Rating"] == "Rating"]
-# pc_data = process(raw_dataset, price_column, game_index)
-# print("dataset:", dataset_name)
-# print(pc_data.head(10))
-# print(pc_data.shape)
-#
-# pc_data.to_csv(Path(processed_path, dataset_name), index=False)
+    # raw_dataset = raw_dataset.iloc[2249:2260]
+    # raw_dataset = raw_dataset.loc[raw_dataset["Rating"] == "Rating"]
+    # pc_data = process(raw_dataset, price_column, game_index)
+    # print("dataset:", dataset_name)
+    # print(pc_data.head(10))
+    # print(pc_data.shape)
+    #
+    # pc_data.to_csv(Path(processed_path, dataset_name), index=False)
